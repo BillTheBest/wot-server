@@ -13,11 +13,19 @@ if [[ -z "$1" || -z "$2" ]]; then
 	exit 0
 fi
 
+
 # Environment variables
 MASTER_PASSWORD=$1
 SERVER=$2
 RABBITMQ_SERVER=/usr/lib/rabbitmq/bin/rabbitmq-server
 RABBITMQCTL=/usr/lib/rabbitmq/bin/rabbitmqctl
+
+if [[ $(whoami) == 'root' ]]; then
+	echo "Installing server $SERVER"
+else
+	echo "You must be root to install $SERVER"
+	exit 0
+fi
 
 # Install Development tools so we can build software
 yum -y groupinstall "Development Tools"
@@ -29,7 +37,7 @@ yum -y install http://mirror.pnl.gov/epel/6/i386/epel-release-6-8.noarch.rpm
 rpm -i http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm
 
 # Install postgres
-yum install -y postgresql93-server postgresql93-contrib
+yum install -y postgresql93-server postgresql93-contrib postgresql93-devel
 
 # Install PowerDNS with the postgresql backend
 yum install -y pdns bind-utils pdns-backend-postgresql.x86_64
