@@ -1,0 +1,65 @@
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: whitesmoke;
+}
+
+.banner {
+	position: fixed; z-index: 100;
+	font: bold 32px Arial;
+	border-width: 5px 0px;
+	border-style: solid none;
+	border-color: steelblue;
+	border-image: none;
+	-webkit-transform: translate(-100px, 20px) rotate(-45deg);
+	transform: translate(-100px, 20px) rotate(-45deg);
+	top: 0px;
+	left: 0px;
+	width: 300px;
+	text-align: center;
+	color: whitesmoke;
+	background: none repeat scroll 0% 0% skyblue;
+}
+
+.banner:hover {
+	color: white;
+}
+
+.carousel {
+	position: relative;
+	background-color: rgb(32,24,64);
+	height: 400px;
+	width: 100%;
+
+}
+
+.nav {
+	position: relative;
+	height: 28px;
+	width: 100%;
+	background-color: steelblue;
+	font: 24px Arial;
+	color: whitesmoke;
+	text-align:  center;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.nav {
+	color: white;
+}
+
+.item {
+	padding: 8px;
+}
+
+.item:hover {
+	background-color: skyblue;
+}
+
+.spacer {
+	position: relative;
+	display: inline-block;
+	width: 10%;
+}

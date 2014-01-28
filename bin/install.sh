@@ -177,7 +177,7 @@ rpm --nosignature -i http://repo.varnish-cache.org/redhat/varnish-3.0/el6/noarch
 yum -y install varnish
 
 # Install the varnish config for all of the applications
-cp $DIR/etc/default.vcl /etc/vanish/default.vcl
+cp $DIR/etc/wot.vcl /etc/vanish/wot.vcl
 cp $DIR/etc/varnish /etc/sysconfig/varnish
 
 
