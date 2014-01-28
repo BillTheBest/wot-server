@@ -87,8 +87,8 @@ chmod 400 /var/lib/rabbitmq/.erlang.cookie
 chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
 
 # Install a custom RabbitMQ server scripts so we can use FQDN with our RabbitMQ
-cp $DIR/rabbitmq-server > $RABBITMQ_SERVER
-cp $DIR/rabbitmqctl > $RABBITMQCTL
+cp $DIR/bin/rabbitmq-server $RABBITMQ_SERVER
+cp $DIR/bin/rabbitmqctl $RABBITMQCTL
 
 # Start the rabbitmq server and install in rc.local and add it to the path
 export CONTAINER_SERVER="$SERVER"
