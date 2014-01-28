@@ -39,6 +39,9 @@ rpm -i http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.no
 # Install postgres
 yum install -y postgresql93-server postgresql93-contrib postgresql93-devel
 
+# Export the path for things like pg_config
+export PATH=/usr/pgsql-9.3/bin/:$PATH
+
 # Install PowerDNS with the postgresql backend
 yum install -y pdns bind-utils pdns-backend-postgresql.x86_64
 
@@ -91,7 +94,7 @@ cp $DIR/rabbitmqctl > $RABBITMQCTL
 export CONTAINER_SERVER="$SERVER"
 $RABBITMQ_SERVER &
 echo "CONTAINER_SERVER=$SERVER $RABBITMQ_SERVER &"  >> /etc/rc.local
-echo "export PATH=/usr/lib/rabbitmq/bin:$PATH" >> /etc/profile.d/rabbitmq.sh
+echo "export PATH=/usr/lib/rabbitmq/bin:\$PATH" >> /etc/profile.d/rabbitmq.sh
 sleep 5
 
 # Setup the wot-admin user and remove guest:guest
@@ -119,9 +122,15 @@ rm -rf node-v0.10.25 node-v0.10.25.tar.gz
 popd
 
 # Setup default path to include node and npm in path
-echo "export PATH=/usr/local/bin:/usr/local/sbin:$PATH" > /etc/profile.d/nodejs.sh
+echo "export PATH=/usr/local/bin:/usr/local/sbin:\$PATH" > /etc/profile.d/nodejs.sh
 echo "export NODE_PATH=\"$$(npm root -g)\"" >> /etc/profile.d/nodejs.sh
+
 source /etc/profile.d/nodejs.sh
+
+# 
+echo "export PATH=/usr/pgsql-9.3/bin:\$PATH" >> /etc/profile.d/pg.sh
+
+source /etc/profile.d/pg.sh
 
 # Install the core NPM modules
 npm install -g coffee-script
@@ -165,14 +174,10 @@ popd
 
 # Install Varnish repo
 rpm --nosignature -i http://repo.varnish-cache.org/redhat/varnish-3.0/el6/noarch/varnish-release/varnish-release-3.0-1.el6.noarch.rpm
-yum install varnish
+yum -y install varnish
 
 # Install the varnish config for all of the applications
-cp $DIR/etc/default.vcl /etc/vanishd/default.vcl
+cp $DIR/etc/default.vcl /etc/vanish/default.vcl
 cp $DIR/etc/varnish /etc/sysconfig/varnish
-
-
-
-
 
 
