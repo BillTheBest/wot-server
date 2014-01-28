@@ -13,12 +13,12 @@ if [[ -z "$1" || -z "$2" ]]; then
 	exit 0
 fi
 
-
 # Environment variables
 MASTER_PASSWORD=$1
 SERVER=$2
 RABBITMQ_SERVER=/usr/lib/rabbitmq/bin/rabbitmq-server
 RABBITMQCTL=/usr/lib/rabbitmq/bin/rabbitmqctl
+DIR=$(dirname $0)/..
 
 if [[ $(whoami) == 'root' ]]; then
 	echo "Installing server $SERVER"
@@ -43,8 +43,7 @@ yum install -y postgresql93-server postgresql93-contrib postgresql93-devel
 yum install -y pdns bind-utils pdns-backend-postgresql.x86_64
 
 # Install the PowerDNS configuration and SQL script
-curl -L https://raw2.github.com/cthulhuology/docker-pdns/master/pdns.conf >  /etc/pdns/pdns.conf
-curl -L https://raw2.github.com/cthulhuology/docker-pdns/master/pdns.sql > /etc/pdns/pdns.sql
+cp $DIR/etc/pdns.conf /etc/pdns/pdns.conf
 
 # delete the stock password, and add our master password
 sed -i -e '16d' /etc/pdns/pdns.conf
@@ -65,7 +64,7 @@ sleep 5
 # Create the postgresql database & create the user & schema
 su - postgres -c 'createdb pdns'
 su - postgres -c 'createuser pdns'
-psql -U postgres -h localhost pdns < /etc/pdns/pdns.sql
+psql -U postgres -h localhost pdns < $DIR/etc/pdns.sql
 sleep 4
 
 # Start the PowerDNS server
@@ -85,8 +84,8 @@ chmod 400 /var/lib/rabbitmq/.erlang.cookie
 chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie
 
 # Install a custom RabbitMQ server scripts so we can use FQDN with our RabbitMQ
-curl -L https://raw.github.com/cthulhuology/docker-rabbitmq/master/rabbitmq-server > $RABBITMQ_SERVER
-curl -L https://raw.github.com/cthulhuology/docker-rabbitmq/master/rabbitmqctl > $RABBITMQCTL
+cp $DIR/rabbitmq-server > $RABBITMQ_SERVER
+cp $DIR/rabbitmqctl > $RABBITMQCTL
 
 # Start the rabbitmq server and install in rc.local and add it to the path
 export CONTAINER_SERVER="$SERVER"
@@ -163,6 +162,16 @@ make install
 popd
 rm -rf redis-2.6.16.tar.gz redis-2.6.16
 popd
+
+# Install Varnish repo
+rpm --nosignature -i http://repo.varnish-cache.org/redhat/varnish-3.0/el6/noarch/varnish-release/varnish-release-3.0-1.el6.noarch.rpm
+yum install varnish
+
+# Install the varnish config for all of the applications
+cp $DIR/etc/default.vcl /etc/vanishd/default.vcl
+cp $DIR/etc/varnish /etc/sysconfig/varnish
+
+
 
 
 
